@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+service TodoService {
+	rpc CreateTodo(CreateTodoRequest) returns (CreateTodoResponse) {}
+	rpc GetTodo(GetTodoRequest) returns (GetTodoResponse) {}
+	rpc ListTodo(ListTodoRequest) returns (ListTodoResponse) {}
+	rpc DeleteTodo(DeleteTodoRequest) returns (DeleteTodoResponse) {}
+	rpc UpdateTodo(UpdateTodoRequest) returns (UpdateTodoResponse) {}
+}
+
+message Todo {
+	string item = 1;
+	string status = 2;
+}
+
+message CreateTodoRequest {
+	string item = 1;
+}
+
+message CreateTodoResponse {
+	Todo todo = 1;
+}
+
+message GetTodoRequest {
+	string item = 1;
+}
+
+message GetTodoResponse {
+	Todo todo = 1;
+}
+
+message ListTodoRequest {}
+
+message ListTodoResponse {
+	repeated Todo todos = 1;
+}
+
+message DeleteTodoRequest {
+	string item = 1;
+}
+
+message DeleteTodoResponse {}
+
+message UpdateTodoRequest {
+	string item = 1;
+	string status = 2;
+}
+
+message UpdateTodoResponse {}
+
+// service todo {
+//     rpc AddItem(Item) returns (Item){}
+//     rpc GetAllItems(Empty) returns (stream Item){}
+//     rpc UpdateStatus(Item) returns (Item){}
+//     rpc DeleteItem(Item) returns (Item){}
+// }
+
+// message Item { 
+//     string item = 1;
+//     string status = 2;
+// }
+
+// message Empty {}
