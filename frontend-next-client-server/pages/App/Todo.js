@@ -19,6 +19,8 @@ import AddTaskIcon from '@mui/icons-material/AddTask'
 import Typography from '@mui/material/Typography'
 import axios from 'axios'
 
+import { NextServerUrl } from '../../utils/Urls'
+
 import { useTodoSSR } from '../../AppContext'
 
 const styles = {
@@ -63,35 +65,35 @@ const styles = {
 const theme = createTheme()
 
 export default function Todo () {
-  // class Todo extends React.Component {
   const [tasks, setTasks] = useTodoSSR()
   const [newTask, setNewTask] = useState('')
-  const [changesMade, setChangesMade] = useState(0)
-
-  const handleChanges = e => {
-    setNewTask(e.target.value)
-  }
 
   const handleOnTextUpdate = e => {
-    setNewTask(e.target.value)
+    // use useRef() **
+    setNewTask(e.target.value) // this type is used in search engines
   }
 
   const handleAddTask = async () => {
-    // setChangesMade(setChangesMade + 1)
-    console.log('changesMade')
-    let taskList = tasks
+    // let taskList = tasks // DON'T USE IN THIS WAY. This is actually a pointer and doesn't make a deep copy of tasks
+
+    console.log(`${NextServerUrl}/api/add/`)
     // make an axios post request
     let res = axios
-      .post('http://localhost:3000/api/add/', {
+      .post(`${NextServerUrl}/api/add/`, {
+        // ** have a common variable in a file for both port and url
         item: newTask
       })
       .then(function (response) {
         // handle success
         console.log('response from nexjs backend')
         console.log(response)
-        taskList.push({ text: newTask, done: false })
 
-        setTasks(taskList)
+        setNewTask('')
+        setTasks(prevTasks => {
+          return prevTasks.concat({ text: newTask, done: false })
+        })
+
+        // note: I've simply modified the state variable after successful post request but we should ideally re-fetch all the items (as done below for update and delete operations) after adding our new task.
       })
       .catch(function (error) {
         // handle error
@@ -100,65 +102,129 @@ export default function Todo () {
       .finally(function () {
         // always executed
         console.log('Finally called')
-        // setHook(response.data);
+        console.log(NextServerUrl)
       })
-    // if successful
-    //taskList.push({ text: newTask, done: "false" })
-
-    // update the taskslist to re-render
-    // setTasks(taskList)
-    setNewTask('')
   }
 
-  const handleDeleteTask = taskToDelete => {
+  const handleDeleteTask = async taskToDelete => {
     console.log('handleDeleteTask invoked')
-    let taskList = tasks
+
     // make an axios post request
+    console.log('taskToDelete')
+    console.log(taskToDelete)
 
-    // if successful
-    taskList.splice(taskList.indexOf(taskToDelete), 1)
+    console.log('tasks')
+    console.log(tasks)
 
-    // update the taskslist to re-render
-    setTasks(taskList)
-    setNewTask('')
+    let itemToDelete = taskToDelete.text
+
+    console.log('itemToDelete')
+    console.log(itemToDelete)
+    let res = axios
+      .post(`${NextServerUrl}/api/delete/`, {
+        item: itemToDelete
+      })
+      .then(function (response) {
+        // handle success
+        console.log('response from nexjs backend')
+
+        // correct way is to fetch all the data again
+        let tasks1 = [] // temp variable to fetch and store data again
+
+        let res1 = axios
+          .get(`${NextServerUrl}/api/list-all/`)
+          .then(function (response1) {
+            // response1 = response1.json()
+            console.log(response1.data)
+            response1.data.map(todoItem1 => {
+              if (todoItem1[1] == 'true') {
+                tasks1.push({ text: todoItem1[0], done: true })
+              } else {
+                tasks1.push({ text: todoItem1[0], done: false })
+              }
+            })
+
+            setTasks(tasks1) // set the tasks again
+          })
+          .catch(function (error) {
+            // handle error
+            console.log(error)
+          })
+          .finally(function () {
+            // always executed
+            console.log('re-fetched all the tasks after delete')
+          })
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error)
+      })
+      .finally(function () {
+        // always executed
+        console.log('Finally called')
+      })
   }
 
-  const handleToggle = toggledTask => {
-    let taskList = tasks
-    // make an axios post request
+  const handleToggle = async toggledTask => {
+    let itemToUpdate = toggledTask.text
+
+    // toggle the task status
+    let statusToUpdate = '' + !toggledTask.done
+    // note: we are sending the status as a string
+
+    console.log('task To Update')
     console.log(toggledTask)
-    console.log(taskList)
-    taskList[taskList.indexOf(toggledTask)].done = !taskList[
-      taskList.indexOf(toggledTask)
-    ].done
 
-    // update the taskslist to re-render
-    setTasks(taskList)
-    setNewTask('')
+    console.log('statusToUpdate')
+    console.log(statusToUpdate)
+
+    // make an axios post request
+    let res = axios
+      .post(`${NextServerUrl}/api/update/`, {
+        item: itemToUpdate,
+        status: statusToUpdate
+      })
+      .then(function (response) {
+        // handle success
+        console.log('response from nexjs backend')
+
+        // correct way is to fetch all the data again
+        let tasks1 = [] // temp variable to fetch and store data again
+
+        let res1 = axios
+          .get(`${NextServerUrl}/api/list-all/`)
+          .then(function (response1) {
+            // response1 = response1.json()
+            console.log(response1.data)
+            response1.data.map(todoItem1 => {
+              if (todoItem1[1] == 'true') {
+                tasks1.push({ text: todoItem1[0], done: true })
+              } else {
+                tasks1.push({ text: todoItem1[0], done: false })
+              }
+            })
+
+            setTasks(tasks1) // set the tasks again
+          })
+          .catch(function (error) {
+            // handle error
+            console.log(error)
+          })
+          .finally(function () {
+            // always executed
+            console.log('re-fetched all the tasks after status update')
+          })
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error)
+      })
+      .finally(function () {
+        // always executed
+        console.log('Finally called')
+      })
   }
 
-  // onTextUpdate = e => {
-  //   this.setState({ newTask: e.target.value });
-  // };
-
-  // addTask = () => {
-  //   let { tasks, newTask } = this.state;
-  //   tasks.push({ text: newTask, done: false });
-  //   this.setState({ tasks: tasks, newTask: "" });
-  // };
-
-  // deleteTask = task => {
-  //   let { tasks } = this.state;
-  //   tasks.splice(tasks.indexOf(task), 1);
-  //   this.setState({ tasks: tasks, newTask: "" });
-  // };
-
-  // toggle = task => {
-  //   let { tasks } = this.state;
-  //   tasks[tasks.indexOf(task)].done = !tasks[tasks.indexOf(task)].done;
-  //   this.setState({ tasks: tasks, newTask: "" });
-  // };
-  // console.log(tasks)
   return (
     <ThemeProvider theme={theme}>
       <Container component='main' maxWidth='xs'>
@@ -196,10 +262,7 @@ export default function Todo () {
                   variant='raised'
                   color='primary'
                   disabled={!newTask}
-                  onClick={() => {
-                    setChangesMade(changesMade + 1)
-                    handleAddTask()
-                  }}
+                  onClick={handleAddTask}
                 >
                   <AddIcon />
                 </IconButton>
@@ -215,13 +278,7 @@ export default function Todo () {
                             <Switch
                               color='primary'
                               checked={!task.done}
-                              onChange={() =>
-                                /*console.log(
-                                    task
-                                  )*/ handleToggle(
-                                  task
-                                )
-                              }
+                              onChange={() => handleToggle(task)}
                             />
                           }
                           label={task.text}
@@ -247,60 +304,3 @@ export default function Todo () {
     </ThemeProvider>
   )
 }
-
-//   export default Todo;
-
-// const Todo = () => {
-
-// 	const [item, setItem] = useState("");
-// 	const [newItem, setNewItem] = useState([]);
-
-// 	const firstEvent = (event) => {
-// 		setItem(event.target.value);
-// 	}
-
-// 	const secondEvent = () => {
-
-// 		setNewItem((prev)=>{
-// 			return [...prev, item]
-// 		});
-
-// 		setItem("");
-
-// 	}
-
-// 	const thirdEvent = () => {
-// 		setNewItem([]);
-// 	}
-
-// 	return(
-// 		<div>
-// 			<br />
-// 			<br />
-// 			<div className="childOne">
-// 				<input type="text" value={item} placeholder="Add a task" onChange={firstEvent} />
-// 				<Button className="AddBtn" onClick={secondEvent}>
-// 					<AddIcon />
-// 				</Button>
-// 				<br />
-// 				<br />
-// 				<ul className="textFont">
-// 					{
-// 						newItem.map((val) => {
-// 							return <li> {val} </li>;
-// 						})
-// 					}
-// 				</ul>
-// 			</div>
-// 			<br />
-// 			<br />
-// 			<div className="childTwo">
-// 				<Button className="delBtn" onClick={thirdEvent}>
-// 					<DeleteIcon />Delete All
-// 				</Button>
-// 			</div>
-// 		</div>
-// 	);
-// }
-
-// export default Todo;

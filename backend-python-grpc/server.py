@@ -6,7 +6,7 @@ import todo_pb2
 import todo_pb2_grpc
 
 class TodoServiceServicer(todo_pb2_grpc.TodoServiceServicer):
-  global TodoDB # Dict to store the Todos
+  global TodoDB # Dict to store the Todos # instead use array of dicts
   TodoDB = {"sampleF": "false"}
   
   TodoDB["sampleT"] = "true"
@@ -18,15 +18,17 @@ class TodoServiceServicer(todo_pb2_grpc.TodoServiceServicer):
     print('we got: ')
     print(request)
 
+    # validation - in future. since if not set, a default value is sent **
+
     Item = request.item
     
     # add a default status of not completed to it.
-    TodoDB[Item] = "false"
+    TodoDB[Item] = "false"  # ask in the frontend ** future
     
     # return a response as specified in the rpc response messages.
     response = todo_pb2.CreateTodoResponse()
     response.todo.item = Item
-    response.todo.status = "false" # TodoDB[Item]
+    response.todo.status = "false" # TodoDB[Item] # make a local variable for fsa
     
     # return response to client
     print(response)

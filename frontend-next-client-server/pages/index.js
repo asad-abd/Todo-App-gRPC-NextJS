@@ -41,6 +41,8 @@ export async function getServerSideProps () {
   const results = await fetch('http://localhost:3000/api/list-all').then(
     response => response.json()
   )
+// ** instead of the above way directly call
+
   results.map(todoItem => {
     if (todoItem[1] == 'true') {
       todosSSRprops.push({ text: todoItem[0], done: true })

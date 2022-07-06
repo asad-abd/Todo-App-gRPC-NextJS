@@ -9,9 +9,8 @@ export default function handler (req, res) {
     grpc.credentials.createInsecure()
   )
   // Get all tasks from your grpc server
-  console.log('---create-todo was invoked. \n function handler req:----')
+  console.log('---delete-todo was invoked. \n function handler req:----')
   // console.log(req)
-  // fetch the item to create
   let itemToDelete = req.body.item
 
   let request = new messages.DeleteTodoRequest().setItem(itemToDelete)
@@ -24,10 +23,11 @@ export default function handler (req, res) {
         //return err
         res.status(400).json(response)
         resolve()
+      } else {
+        console.log(response)
+        res.status(200).json(response)
+        resolve()
       }
-      console.log(response)
-      res.status(200).json(response.array)
-      resolve()
     })
   })
 }

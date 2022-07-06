@@ -11,7 +11,7 @@ export default function handler (req, res) {
   // client.createTodoService(req)
 
   const client = new services.TodoServiceClient(
-    '0.0.0.0:50051',
+    '0.0.0.0:50051', /// ** have common var
     grpc.credentials.createInsecure()
   )
   // Get all tasks from your grpc server
@@ -30,10 +30,11 @@ export default function handler (req, res) {
         // return err
         res.status(400).json(response)
         resolve()
+      } else {
+        // console.log(response)
+        res.status(200).json(response.array)
+        resolve()
       }
-      // console.log(response)
-      res.status(200).json(response.array)
-      resolve()
     })
   })
 }
