@@ -1,58 +1,60 @@
 import React, { useState, useEffect } from 'react'
 import Todo from './App/Todo'
-// import TodoApp from './frontend-react/Todo'
-import { createGlobalStyle } from './styled/global.style'
+import { GRPCServerUrl } from '../utils/Urls'
+import { TasksContextProvider } from '../utils/AppContext'
 
-import axios from 'axios'
-import { TasksContextProvider } from '../AppContext'
+const grpc = require('@grpc/grpc-js')
+const messages = require('../proto/todo_pb')
+const services = require('../proto/todo_grpc_pb')
 
 export async function getServerSideProps () {
-  // Fetch data from API
-  // const res = await fetch('http://localhost:3000/api/list-all')
-  // const todoSSR = await res.json()
   let todosSSRprops = []
 
-  // let res = await axios
-  //   .get('http://localhost:3000/api/list-all')
-  //   .then(function (response) {
-  //     // handle success
-  //     // todosSSRprops = tasks
-  //     // console.log('get server side props invoked')
-  //     // console.log(response.data[0])
-  //     // set the tasks
-  //     response.data.map(todoItem => {
-  //       if (todoItem[1] == 'true') {
-  //         todosSSRprops.push({ text: todoItem[0], done: true })
-  //       } else {
-  //         todosSSRprops.push({ text: todoItem[0], done: false })
-  //       }
-  //     })
-  //     return { props: { todosSSRprops } }
-  //     // setTasks(taskList)
-  //   })
-  //   .catch(function (error) {
-  //     // handle error
-  //     console.log(error)
-  //   })
-  //   .finally(function () {
-  //     // always executed
-  //     // console.log(todosSSRprops)
-  //   })
-  const results = await fetch('http://localhost:3000/api/list-all').then(
-    response => response.json()
-  )
-// ** instead of the above way directly call
+  // const results = await fetch('http://localhost:3000/api/list-all').then(
+  //   response => response.json()
+  // )
+  // instead of the above REST call, directly call the grpc server:-
 
-  results.map(todoItem => {
-    if (todoItem[1] == 'true') {
-      todosSSRprops.push({ text: todoItem[0], done: true })
-    } else {
-      todosSSRprops.push({ text: todoItem[0], done: false })
-    }
-  })
+  const client = new services.TodoServiceClient(
+    `${GRPCServerUrl}`,
+    grpc.credentials.createInsecure()
+  )
+
+  // Get all tasks from your grpc server
+  // console.log('---list-all was invoked in getServerSideProps()---')
+  let request = new messages.ListTodoRequest()
+
+  async function fetchAllTodos (todosSSRprops) {
+    return new Promise((resolve, reject) => {
+      client.listTodo(request, (err, response) => {
+        if (err) {
+          console.log(err)
+          console.log('error occurred while doing getServerSideProps()')
+          resolve()
+        } else {
+          // console.log('response.array')
+          // console.log(response.array)
+          let listOfFetchedTodos = response.array[0]
+          listOfFetchedTodos.map(todoItem => {
+            if (todoItem[1] == 'true') {
+              todosSSRprops.push({ text: todoItem[0], done: true })
+            } else {
+              todosSSRprops.push({ text: todoItem[0], done: false })
+            }
+          })
+          resolve()
+        }
+      })
+    })
+  }
+
+  const updateTodoSSRprops = await fetchAllTodos(todosSSRprops)
+
+  console.log('todosSSRprops before return')
   console.log(todosSSRprops)
+
   return {
-    // send the information that you want to receive in the above function as props
+    // send the information that you want to receive in the above fun wait till data is loadedction as props
     props: { todosSSRprops }
   }
   // Pass data to the page via props

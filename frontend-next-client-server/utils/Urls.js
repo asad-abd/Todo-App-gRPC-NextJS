@@ -1,7 +1,5 @@
 // add back end server link
-export const NextServerUrl = 'http://localhost:3000'
-
+export const GRPCServerUrl = '0.0.0.0:50051'
 
 // add next JS local endpoints urls.
-
-// add ports
+export const NextServerUrl = 'http://localhost:3000'

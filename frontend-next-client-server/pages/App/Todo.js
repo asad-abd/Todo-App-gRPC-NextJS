@@ -21,7 +21,7 @@ import axios from 'axios'
 
 import { NextServerUrl } from '../../utils/Urls'
 
-import { useTodoSSR } from '../../AppContext'
+import { useTodoSSR } from '../../utils/AppContext'
 
 const styles = {
   done: {

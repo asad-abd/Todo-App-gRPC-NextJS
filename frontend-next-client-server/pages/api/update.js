@@ -1,6 +1,7 @@
 const grpc = require('@grpc/grpc-js')
 const messages = require('../../proto/todo_pb')
 const services = require('../../proto/todo_grpc_pb')
+import { GRPCServerUrl } from '../../utils/Urls'
 
 // iife
 export default function handler (req, res) {
@@ -11,7 +12,7 @@ export default function handler (req, res) {
   // client.createTodoService(req)
 
   const client = new services.TodoServiceClient(
-    '0.0.0.0:50051',
+    `${GRPCServerUrl}`,
     grpc.credentials.createInsecure()
   )
   // Get all tasks from your grpc server
