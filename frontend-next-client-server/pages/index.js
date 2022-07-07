@@ -32,11 +32,11 @@ export async function getServerSideProps () {
           console.log('error occurred while doing getServerSideProps()')
           resolve()
         } else {
-          // console.log('response.array')
           // console.log(response.array)
           let listOfFetchedTodos = response.array[0]
           listOfFetchedTodos.map(todoItem => {
-            if (todoItem[1] == 'true') {
+            if (todoItem[1]) {
+              // if == true
               todosSSRprops.push({ text: todoItem[0], done: true })
             } else {
               todosSSRprops.push({ text: todoItem[0], done: false })
@@ -67,7 +67,6 @@ function Index ({ todosSSRprops }) {
     <TasksContextProvider value={[todosSSR, setTodosSSR]}>
       <Todo />
     </TasksContextProvider>
-    // <TodoApp />
   )
 }
 

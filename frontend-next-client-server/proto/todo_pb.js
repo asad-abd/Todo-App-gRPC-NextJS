@@ -290,7 +290,7 @@ proto.Todo.prototype.toObject = function(opt_includeInstance) {
 proto.Todo.toObject = function(includeInstance, msg) {
   var f, obj = {
     item: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    status: jspb.Message.getFieldWithDefault(msg, 2, "")
+    status: jspb.Message.getBooleanFieldWithDefault(msg, 2, false)
   };
 
   if (includeInstance) {
@@ -332,7 +332,7 @@ proto.Todo.deserializeBinaryFromReader = function(msg, reader) {
       msg.setItem(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {boolean} */ (reader.readBool());
       msg.setStatus(value);
       break;
     default:
@@ -372,8 +372,8 @@ proto.Todo.serializeBinaryToWriter = function(message, writer) {
     );
   }
   f = message.getStatus();
-  if (f.length > 0) {
-    writer.writeString(
+  if (f) {
+    writer.writeBool(
       2,
       f
     );
@@ -400,20 +400,20 @@ proto.Todo.prototype.setItem = function(value) {
 
 
 /**
- * optional string status = 2;
- * @return {string}
+ * optional bool status = 2;
+ * @return {boolean}
  */
 proto.Todo.prototype.getStatus = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 2, false));
 };
 
 
 /**
- * @param {string} value
+ * @param {boolean} value
  * @return {!proto.Todo} returns this
  */
 proto.Todo.prototype.setStatus = function(value) {
-  return jspb.Message.setProto3StringField(this, 2, value);
+  return jspb.Message.setProto3BooleanField(this, 2, value);
 };
 
 
@@ -1504,7 +1504,7 @@ proto.UpdateTodoRequest.prototype.toObject = function(opt_includeInstance) {
 proto.UpdateTodoRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     item: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    status: jspb.Message.getFieldWithDefault(msg, 2, "")
+    status: jspb.Message.getBooleanFieldWithDefault(msg, 2, false)
   };
 
   if (includeInstance) {
@@ -1546,7 +1546,7 @@ proto.UpdateTodoRequest.deserializeBinaryFromReader = function(msg, reader) {
       msg.setItem(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {boolean} */ (reader.readBool());
       msg.setStatus(value);
       break;
     default:
@@ -1586,8 +1586,8 @@ proto.UpdateTodoRequest.serializeBinaryToWriter = function(message, writer) {
     );
   }
   f = message.getStatus();
-  if (f.length > 0) {
-    writer.writeString(
+  if (f) {
+    writer.writeBool(
       2,
       f
     );
@@ -1614,20 +1614,20 @@ proto.UpdateTodoRequest.prototype.setItem = function(value) {
 
 
 /**
- * optional string status = 2;
- * @return {string}
+ * optional bool status = 2;
+ * @return {boolean}
  */
 proto.UpdateTodoRequest.prototype.getStatus = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 2, false));
 };
 
 
 /**
- * @param {string} value
+ * @param {boolean} value
  * @return {!proto.UpdateTodoRequest} returns this
  */
 proto.UpdateTodoRequest.prototype.setStatus = function(value) {
-  return jspb.Message.setProto3StringField(this, 2, value);
+  return jspb.Message.setProto3BooleanField(this, 2, value);
 };
 
 

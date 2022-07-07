@@ -22,11 +22,8 @@ export default function handler (req, res) {
       }
       // console.log(response.array[0])
       res.status(200).json(response.array[0])
-      //return res.array
       // the above res is what we receive from the grpc server and what we will return to the next js client.
       resolve()
     })
   })
-
-  // res.status(200).json(res.array[0])
 }

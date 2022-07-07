@@ -10,7 +10,7 @@ service TodoService {
 
 message Todo {
 	string item = 1;
-	string status = 2;
+	bool status = 2;
 }
 
 message CreateTodoRequest {
@@ -43,21 +43,7 @@ message DeleteTodoResponse {}
 
 message UpdateTodoRequest {
 	string item = 1;
-	string status = 2;
+	bool status = 2;
 }
 
 message UpdateTodoResponse {}
-
-// service todo {
-//     rpc AddItem(Item) returns (Item){}
-//     rpc GetAllItems(Empty) returns (stream Item){}
-//     rpc UpdateStatus(Item) returns (Item){}
-//     rpc DeleteItem(Item) returns (Item){}
-// }
-
-// message Item { 
-//     string item = 1;
-//     string status = 2;
-// }
-
-// message Empty {}

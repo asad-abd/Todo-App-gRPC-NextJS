@@ -4,14 +4,13 @@ from concurrent import futures
 
 import todo_pb2
 import todo_pb2_grpc
+import Utils.Urls
 
 class TodoServiceServicer(todo_pb2_grpc.TodoServiceServicer):
   global TodoDB # Dict to store the Todos # instead use array of dicts
-  TodoDB = {"sampleF": "false"}
+  TodoDB = {"sampleT": True}
   
-  TodoDB["sampleT"] = "true"
-
-  # TodoDB["sample"] = False
+  TodoDB["sampleF"] = False
 
   def CreateTodo(self, request, context):
     # we should be receiving the message in the same format as we sent it - as specified in the rpc request messages.
@@ -23,12 +22,12 @@ class TodoServiceServicer(todo_pb2_grpc.TodoServiceServicer):
     Item = request.item
     
     # add a default status of not completed to it.
-    TodoDB[Item] = "false"  # ask in the frontend ** future
+    TodoDB[Item] = False  # ask in the frontend ** future
     
     # return a response as specified in the rpc response messages.
     response = todo_pb2.CreateTodoResponse()
     response.todo.item = Item
-    response.todo.status = "false" # TodoDB[Item] # make a local variable for fsa
+    response.todo.status = TodoDB[Item] 
     
     # return response to client
     print(response)
@@ -85,10 +84,10 @@ class TodoServiceServicer(todo_pb2_grpc.TodoServiceServicer):
     # ..
 
     # update the status 
-    if Status.lower() == "true":
-      TodoDB[Item] = "true"
+    if Status:  # faster checking than using '==' or 'if var is true/false'
+      TodoDB[Item] = True
     else:
-      TodoDB[Item] = "false"
+      TodoDB[Item] = False
     # return a response as specified in the rpc response messages.
     response = todo_pb2.UpdateTodoResponse()
     
@@ -99,8 +98,8 @@ class TodoServiceServicer(todo_pb2_grpc.TodoServiceServicer):
 def main():
   server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
   todo_pb2_grpc.add_TodoServiceServicer_to_server(TodoServiceServicer(), server)
-  print('Server Started. Listening on port 50051')
-  server.add_insecure_port('[::]:50051')
+  print(f'Server Started. Listening on port {Utils.Urls.GRPCServerPort}') 
+  server.add_insecure_port(f'[::]:{Utils.Urls.GRPCServerPort}')
   server.start()
   server.wait_for_termination()
 

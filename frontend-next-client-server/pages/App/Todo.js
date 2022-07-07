@@ -137,7 +137,8 @@ export default function Todo () {
             // response1 = response1.json()
             console.log(response1.data)
             response1.data.map(todoItem1 => {
-              if (todoItem1[1] == 'true') {
+              if (todoItem1[1]) {
+                // if == true
                 tasks1.push({ text: todoItem1[0], done: true })
               } else {
                 tasks1.push({ text: todoItem1[0], done: false })
@@ -169,8 +170,8 @@ export default function Todo () {
     let itemToUpdate = toggledTask.text
 
     // toggle the task status
-    let statusToUpdate = '' + !toggledTask.done
-    // note: we are sending the status as a string
+    let statusToUpdate = !toggledTask.done
+    // note: we are sending the status as a boolean
 
     console.log('task To Update')
     console.log(toggledTask)
@@ -197,7 +198,8 @@ export default function Todo () {
             // response1 = response1.json()
             console.log(response1.data)
             response1.data.map(todoItem1 => {
-              if (todoItem1[1] == 'true') {
+              if (todoItem1[1]) {
+                // if == true
                 tasks1.push({ text: todoItem1[0], done: true })
               } else {
                 tasks1.push({ text: todoItem1[0], done: false })
